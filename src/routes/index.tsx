@@ -1,23 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Game } from "@/components/game/Game";
+import { slamdunk } from "@/game/themes/slamdunk";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "슬램덩크 — 당신은 북산고의 매니저가 될 수 있나?" },
+      { name: "description", content: "북산고 농구부 신입 매니저가 되어 10가지 상황에서 팀 신뢰도와 판단력을 키우는 선택형 게임." },
+      { property: "og:title", content: "슬램덩크 — 당신은 북산고의 매니저가 될 수 있나?" },
+      { property: "og:description", content: "팀 신뢰도와 판단력으로 정식 매니저에 도전하세요." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: () => <Game theme={slamdunk} />,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
