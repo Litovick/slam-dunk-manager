@@ -17,7 +17,7 @@ export function beep(kind: "click" | "good" | "bad", muted: boolean) {
     ctx ??= new AudioContext();
     const o = ctx.createOscillator();
     const g = ctx.createGain();
-    const f = kind === "good" ? [660, 990] : kind === "bad" ? [220, 140] : [520, 520];
+    const f: [number, number] = kind === "good" ? [660, 990] : kind === "bad" ? [220, 140] : [520, 520];
     o.type = kind === "bad" ? "sawtooth" : "square";
     o.frequency.setValueAtTime(f[0], ctx.currentTime);
     o.frequency.linearRampToValueAtTime(f[1], ctx.currentTime + 0.15);

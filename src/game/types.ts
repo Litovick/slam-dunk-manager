@@ -22,7 +22,7 @@ export type Character = {
   tone: "primary" | "ink" | "orange" | "court" | "muted";
 };
 
-export type Line = { speaker?: string; text: string };
+export type Line = { speaker?: string | undefined; text: string };
 
 export type Choice = {
   label: string;
