@@ -207,7 +207,7 @@ export const slamdunk: Theme = {
   endings: [
     {
       id: "happy", title: "HAPPY ENDING", subtitle: "북산고 농구부 정식 매니저 임명!", background: "gym",
-      condition: (s) => s.trust >= 80 && s.judgment >= 80,
+      condition: (s) => (s["trust"] ?? 0) >= 80 && (s["judgment"] ?? 0) >= 80,
       lines: [
         L(undefined, "밝은 햇살이 들어오는 북산고 체육관. 선수들이 당신을 둘러싸고 있다."),
         L("chisu", "그동안 네가 보여 준 모습은 충분히 훌륭했다."),

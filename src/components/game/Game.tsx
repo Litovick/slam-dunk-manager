@@ -31,7 +31,7 @@ export function Game({ theme }: { theme: Theme }) {
   const click = () => beep("click", muted);
   const reset = (phase: GameState["phase"]) => setS({ ...newGame(theme), phase, step: 0 });
 
-  const q = theme.questions[s.qIndex];
+  const q = theme.questions[s.qIndex]!;
   const ending = s.phase === "ending" ? resolveEnding(theme, s.stats) : null;
 
   // Determine current lines for dialog-driven phases
@@ -41,7 +41,7 @@ export function Game({ theme }: { theme: Theme }) {
   if (s.phase === "opening") { lines = theme.opening; cast = ["hanna", "baekho", "taewoong", "chisu"]; }
   if (s.phase === "question" || s.phase === "result") {
     bg = q.background; cast = q.cast;
-    lines = s.phase === "question" ? q.lines : q.choices[s.answers[q.id]].reactions;
+    lines = s.phase === "question" ? q.lines : q.choices[s.answers[q.id] ?? 0]!.reactions;
   }
   if (ending) { lines = ending.lines; bg = ending.background; cast = ["chisu", "baekho", "taewoong", "hanna"]; }
 
@@ -53,7 +53,7 @@ export function Game({ theme }: { theme: Theme }) {
 
   const onPick = (i: number) => {
     if (s.phase !== "question" || q.id in s.answers) return;
-    const e = q.choices[i].effects;
+    const e = q.choices[i]!.effects;
     const good = Object.values(e).reduce((a, b) => a + b, 0) > 0;
     beep(good ? "good" : "bad", muted);
     setFx(good ? "good" : "bad");
@@ -109,7 +109,7 @@ export function Game({ theme }: { theme: Theme }) {
           {s.phase === "opening" ? "OPENING" : ending ? "FINAL" : `QUESTION ${String(s.qIndex + 1).padStart(2, "0")} / ${theme.questions.length}`}
         </div>
         {theme.stats.map((d) => {
-          const v = s.stats[d.id];
+          const v = s.stats[d.id] ?? d.initial;
           const delta = s.phase === "result" ? s.lastDelta?.[d.id] : undefined;
           return (
             <div key={d.id} className="flex min-w-[150px] flex-1 items-center gap-2">
@@ -134,8 +134,8 @@ export function Game({ theme }: { theme: Theme }) {
 
       {/* Cast */}
       <div className="absolute inset-x-0 bottom-[34%] z-10 flex items-end justify-center gap-2 md:gap-8">
-        {allCast.slice(0, 4).map((id) => (
-          <Portrait key={id} c={theme.characters[id]} mood={speaker?.id === id ? mood : "neutral"} active={speaker?.id === id} />
+        {allCast.slice(0, 4).filter((id) => theme.characters[id]).map((id) => (
+          <Portrait key={id} c={theme.characters[id]!} mood={speaker?.id === id ? mood : "neutral"} active={speaker?.id === id} />
         ))}
       </div>
       {fx === "good" && s.phase === "result" && (
@@ -218,7 +218,7 @@ export function Game({ theme }: { theme: Theme }) {
   );
 }
 
-function Dialog({ name, text, canAdvance, onAdvance }: { name?: string; text: string; canAdvance: boolean; onAdvance: () => void }) {
+function Dialog({ name, text, canAdvance, onAdvance }: { name?: string | undefined; text: string; canAdvance: boolean; onAdvance: () => void }) {
   const { shown, done, finish } = useTypewriter(text);
   return (
     <div
