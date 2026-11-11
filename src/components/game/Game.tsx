@@ -93,7 +93,7 @@ export function Game({ theme }: { theme: Theme }) {
                 {theme.title}
               </h1>
               <p className="mt-4 inline-block -rotate-2 bg-ink px-5 py-2 font-display text-xl text-foreground md:text-3xl">{theme.subtitle}</p>
-              <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-3 sm:flex-row">
                 <button onClick={() => { click(); reset("opening"); }} className="w-56 border-4 border-ink bg-primary px-6 py-3 font-display text-2xl text-primary-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-trust">게임 시작</button>
                 <button onClick={() => { click(); setShowCollection(true); }} className="w-56 border-4 border-ink bg-ball px-6 py-3 font-display text-2xl text-ink shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1">엔딩 컬렉션</button>
                 <button onClick={() => { click(); setS((p) => ({ ...p, phase: "howto" })); }} className="w-56 border-4 border-ink bg-card px-6 py-3 font-display text-2xl text-card-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-ball">게임 방법</button>
@@ -174,7 +174,7 @@ export function Game({ theme }: { theme: Theme }) {
             <button onClick={() => { click(); setS((p) => ({ ...p, phase: "question", qIndex: 0, step: 0 })); }} className="mt-5 border-4 border-ink bg-primary px-6 py-2 font-display text-xl text-primary-foreground hover:bg-trust">첫 번째 상황으로 ▶</button>
           </div>
         ) : showEndingCard && ending ? (
-          <div className="animate-scene mx-auto max-w-3xl border-4 border-ink bg-card p-6 text-center text-card-foreground shadow-[8px_8px_0_var(--ink)]">
+          <div className="animate-scene mx-auto max-h-[72vh] max-w-3xl overflow-y-auto border-4 border-ink bg-card p-4 text-center text-card-foreground shadow-[8px_8px_0_var(--ink)] md:p-6">
             <p className={cn("font-display text-5xl", ending.id === "happy" ? "text-primary" : "text-ink")}>「{ending.title}」</p>
             <p className="mt-2 font-display text-2xl">「{ending.subtitle}」</p>
             <p className="mt-4 italic text-muted-foreground">"{ending.quote}"</p>
