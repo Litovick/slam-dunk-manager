@@ -95,6 +95,7 @@ export function Game({ theme }: { theme: Theme }) {
               <p className="mt-4 inline-block -rotate-2 bg-ink px-5 py-2 font-display text-xl text-foreground md:text-3xl">{theme.subtitle}</p>
               <div className="mt-10 flex flex-col flex-wrap items-center justify-center gap-3 sm:flex-row">
                 <button onClick={() => { click(); reset("opening"); }} className="w-56 border-4 border-ink bg-primary px-6 py-3 font-display text-2xl text-primary-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-trust">게임 시작</button>
+                <a href="/attack-on-titan" className="w-56 border-4 border-ink bg-ink px-6 py-3 font-display text-xl text-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-court-dark">진격의 거인 게임 →</a>
                 <button onClick={() => { click(); setShowCollection(true); }} className="w-56 border-4 border-ink bg-ball px-6 py-3 font-display text-2xl text-ink shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1">엔딩 컬렉션</button>
                 <button onClick={() => { click(); setS((p) => ({ ...p, phase: "howto" })); }} className="w-56 border-4 border-ink bg-card px-6 py-3 font-display text-2xl text-card-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-ball">게임 방법</button>
               </div>
