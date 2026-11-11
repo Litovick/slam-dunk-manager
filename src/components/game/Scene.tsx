@@ -11,7 +11,13 @@ const toneClass: Record<Character["tone"], string> = {
 
 export function Portrait({ c, mood, active }: { c: Character; mood: "neutral" | "good" | "bad"; active: boolean }) {
   const face = mood === "good" ? "^ ▽ ^" : mood === "bad" ? "︶ ︿ ︶" : "• _ •";
-  if (c.image) return <img src={c.image} alt={c.name} className="h-56 object-contain" />;
+  if (c.image)
+    return (
+      <div className={cn("relative transition-all duration-300", active ? "z-10 scale-105 opacity-100" : "scale-95 opacity-70 brightness-75", mood === "bad" && active && "grayscale-[40%]")}>
+        <img src={c.image} alt={c.name} width={768} height={1024} className="h-[38vh] max-h-[420px] min-h-[200px] w-auto object-contain drop-shadow-[0_8px_0_var(--ink)]" />
+        {active && mood !== "neutral" && <span className="absolute right-0 top-2 text-4xl">{mood === "good" ? "✨" : "💢"}</span>}
+      </div>
+    );
   return (
     <div className={cn("flex flex-col items-center transition-all duration-300", active ? "scale-105 opacity-100" : "scale-95 opacity-60")}>
       <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-ink bg-card text-lg font-bold text-card-foreground shadow-lg md:h-28 md:w-28">

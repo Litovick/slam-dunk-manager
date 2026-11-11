@@ -1,3 +1,11 @@
+import img_hanna from "@/assets/char-hanna.png";
+import img_baekho from "@/assets/char-baekho.png";
+import img_taewoong from "@/assets/char-taewoong.png";
+import img_chisu from "@/assets/char-chisu.png";
+import img_taeseop from "@/assets/char-taeseop.png";
+import img_daeman from "@/assets/char-daeman.png";
+import img_coach from "@/assets/char-coach.png";
+import img_bench from "@/assets/char-bench.png";
 import type { Line, Theme } from "../types";
 
 const L = (speaker: string | undefined, text: string): Line => ({ speaker, text });
@@ -13,15 +21,15 @@ export const slamdunk: Theme = {
   ],
   characters: {
     me: { id: "me", name: "나", tone: "muted" },
-    hanna: { id: "hanna", name: "이한나", tone: "orange" },
-    baekho: { id: "baekho", name: "강백호", number: "10", tone: "primary" },
-    taewoong: { id: "taewoong", name: "서태웅", number: "11", tone: "ink" },
-    chisu: { id: "chisu", name: "채치수", number: "4", tone: "primary" },
-    taeseop: { id: "taeseop", name: "송태섭", number: "7", tone: "ink" },
-    daeman: { id: "daeman", name: "정대만", number: "14", tone: "primary" },
-    coach: { id: "coach", name: "안 감독", tone: "court" },
-    bench: { id: "bench", name: "벤치 선수", number: "12", tone: "muted" },
-    player: { id: "player", name: "선수", number: "8", tone: "muted" },
+    hanna: { id: "hanna", image: img_hanna, name: "이한나", tone: "orange" },
+    baekho: { id: "baekho", image: img_baekho, name: "강백호", number: "10", tone: "primary" },
+    taewoong: { id: "taewoong", image: img_taewoong, name: "서태웅", number: "11", tone: "ink" },
+    chisu: { id: "chisu", image: img_chisu, name: "채치수", number: "4", tone: "primary" },
+    taeseop: { id: "taeseop", image: img_taeseop, name: "송태섭", number: "7", tone: "ink" },
+    daeman: { id: "daeman", image: img_daeman, name: "정대만", number: "14", tone: "primary" },
+    coach: { id: "coach", image: img_coach, name: "안 감독", tone: "court" },
+    bench: { id: "bench", image: img_bench, name: "벤치 선수", number: "12", tone: "muted" },
+    player: { id: "player", image: img_bench, name: "선수", number: "8", tone: "muted" },
   },
   backgrounds: {
     gym: { label: "북산고 체육관" },
