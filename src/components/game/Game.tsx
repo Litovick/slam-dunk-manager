@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
+import { characterReviews, readCollection, unlockEnding, type EndingCollection } from "@/game/collection";
 import { advance, choose, newGame, resolveEnding, type GameState } from "@/game/engine";
 import type { Line, Theme } from "@/game/types";
 import { cn } from "@/lib/utils";
@@ -16,12 +17,16 @@ export function Game({ theme }: { theme: Theme }) {
   const [loaded, setLoaded] = useState(false);
   const [muted, setMuted] = useState(false);
   const [fx, setFx] = useState<"good" | "bad" | null>(null);
+  const [collection, setCollection] = useState<EndingCollection>({});
+  const [showCollection, setShowCollection] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(key);
       if (raw) setS(JSON.parse(raw));
       setMuted(localStorage.getItem("game:muted") === "1");
+      setCollection(readCollection(theme.id));
     } catch { /* ignore */ }
     setLoaded(true);
   }, [key]);
@@ -29,10 +34,15 @@ export function Game({ theme }: { theme: Theme }) {
   useEffect(() => { localStorage.setItem("game:muted", muted ? "1" : "0"); }, [muted]);
 
   const click = () => beep("click", muted);
-  const reset = (phase: GameState["phase"]) => setS({ ...newGame(theme), phase, step: 0 });
+  const reset = (phase: GameState["phase"]) => { setShowReviews(false); setShowCollection(false); setS({ ...newGame(theme), phase, step: 0 }); };
 
   const q = theme.questions[s.qIndex]!;
   const ending = s.phase === "ending" ? resolveEnding(theme, s.stats) : null;
+  const reviews = ending ? characterReviews(s) : [];
+  useEffect(() => {
+    if (!loaded || !ending || s.step < ending.lines.length) return;
+    setCollection(unlockEnding(theme.id, ending.id));
+  }, [loaded, ending?.id, s.step, theme.id]);
 
   // Determine current lines for dialog-driven phases
   let lines: Line[] = [];
@@ -70,7 +80,14 @@ export function Game({ theme }: { theme: Theme }) {
           <div className="absolute bottom-[18%] left-[18%] h-16 w-16 rounded-full border-4 border-ink bg-ball shadow-2xl [background-image:linear-gradient(90deg,transparent_47%,var(--ink)_47%_53%,transparent_53%)]" />
         </Backdrop>
         <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 text-center">
-          {s.phase === "title" ? (
+          {showCollection ? (
+            <div className="animate-scene w-full max-w-xl border-4 border-ink bg-card p-6 text-card-foreground shadow-[8px_8px_0_var(--ink)]">
+              <h2 className="font-display text-3xl text-primary">엔딩 컬렉션</h2>
+              <p className="mt-2 text-sm">해금한 엔딩 {theme.endings.filter((e) => collection[e.id]).length} / {theme.endings.length}</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">{theme.endings.map((e) => <div key={e.id} className="border-2 border-ink p-4 text-left"><p className="font-display text-xl">{collection[e.id] ? e.title : "??? 잠긴 엔딩"}</p><p className="mt-2 text-sm">{collection[e.id] ? e.subtitle : "게임을 플레이해 해금하세요."}</p></div>)}</div>
+              <button onClick={() => setShowCollection(false)} className="mt-6 border-4 border-ink bg-primary px-5 py-2 font-display text-primary-foreground">돌아가기</button>
+            </div>
+          ) : s.phase === "title" ? (
             <div className="animate-scene">
               <h1 className="font-display text-7xl text-primary drop-shadow-[0_6px_0_var(--ink)] md:text-9xl" style={{ WebkitTextStroke: "3px var(--foreground)" }}>
                 {theme.title}
@@ -78,6 +95,7 @@ export function Game({ theme }: { theme: Theme }) {
               <p className="mt-4 inline-block -rotate-2 bg-ink px-5 py-2 font-display text-xl text-foreground md:text-3xl">{theme.subtitle}</p>
               <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <button onClick={() => { click(); reset("opening"); }} className="w-56 border-4 border-ink bg-primary px-6 py-3 font-display text-2xl text-primary-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-trust">게임 시작</button>
+                <button onClick={() => { click(); setShowCollection(true); }} className="w-56 border-4 border-ink bg-ball px-6 py-3 font-display text-2xl text-ink shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1">엔딩 컬렉션</button>
                 <button onClick={() => { click(); setS((p) => ({ ...p, phase: "howto" })); }} className="w-56 border-4 border-ink bg-card px-6 py-3 font-display text-2xl text-card-foreground shadow-[6px_6px_0_var(--ink)] transition hover:-translate-y-1 hover:bg-ball">게임 방법</button>
               </div>
             </div>
@@ -163,6 +181,12 @@ export function Game({ theme }: { theme: Theme }) {
             <div className="mt-4 flex justify-center gap-6 font-display text-xl">
               {theme.stats.map((d) => <span key={d.id} className={gaugeText[d.tone]}>{d.label} {s.stats[d.id]}</span>)}
             </div>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <button onClick={() => setShowReviews((v) => !v)} className="border-2 border-ink bg-ball px-4 py-2 font-display text-ink">{showReviews ? "캐릭터 평가 접기 ▲" : "캐릭터별 평가 보기 ▼"}</button>
+              <button onClick={() => setShowCollection((v) => !v)} className="border-2 border-ink bg-ink px-4 py-2 font-display text-foreground">{showCollection ? "컬렉션 접기 ▲" : "엔딩 컬렉션 보기 ▼"}</button>
+            </div>
+            {showReviews && <div className="mt-3 grid max-h-[28vh] gap-2 overflow-y-auto text-left sm:grid-cols-2">{reviews.map((r) => <div key={r.id} className="flex gap-3 border-2 border-ink bg-background/10 p-2"><img src={theme.characters[r.id]?.image} alt="" className="h-16 w-14 shrink-0 object-cover" /><div><p className="font-display text-primary">{r.title}</p><p className="text-sm">{r.comment}</p></div></div>)}</div>}
+            {showCollection && <div className="mt-3 grid gap-2 text-left sm:grid-cols-2">{theme.endings.map((e) => <div key={e.id} className="border-2 border-ink p-2"><p className="font-display">{collection[e.id] || e.id === ending.id ? e.title : "??? 잠긴 엔딩"}</p><p className="text-xs">{collection[e.id] || e.id === ending.id ? e.subtitle : "아직 발견하지 못한 엔딩"}</p></div>)}</div>}
             <div className="mt-5 flex flex-wrap justify-center gap-3">
               <button onClick={() => { click(); reset("opening"); }} className="border-4 border-ink bg-primary px-5 py-2 font-display text-lg text-primary-foreground hover:bg-trust">{ending.retryLabel}</button>
               <button onClick={() => { click(); reset("title"); }} className="border-4 border-ink bg-card px-5 py-2 font-display text-lg hover:bg-ball">처음 화면으로</button>
